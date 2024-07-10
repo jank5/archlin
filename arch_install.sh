@@ -1,7 +1,7 @@
 # == MY ARCH SETUP INSTALLER == #
 #part1
 printf '\033c'
-echo "Welcome to bugswriter's arch installer script"
+echo "Welcome to zemo's :D arch installer script"
 sed -i "s/^#ParallelDownloads = 5$/ParallelDownloads = 15/" /etc/pacman.conf
 pacman --noconfirm -Sy archlinux-keyring
 loadkeys us
@@ -18,6 +18,13 @@ if [[ $answer = y ]] ; then
   echo "Enter EFI partition: "
   read efipartition
   mkfs.vfat -F 32 $efipartition
+fi
+read -p "Did you also create swap partition? [y/n] " ans
+if [[ $ans = y ]] ; then
+  echo "Enter swap partition: "
+  read swapn
+  mkswap $swapn
+  swapon $swapn
 fi
 mount $partition /mnt 
 pacstrap /mnt base base-devel linux linux-firmware
@@ -47,6 +54,7 @@ echo "127.0.1.1       $hostname.localdomain $hostname" >> /etc/hosts
 mkinitcpio -P
 passwd
 pacman --noconfirm -S grub efibootmgr os-prober
+lsblk
 echo "Enter EFI partition: " 
 read efipartition
 mkdir /boot/efi
@@ -59,71 +67,56 @@ grub-mkconfig -o /boot/grub/grub.cfg
 pacman -S --noconfirm xorg-server xorg-xinit xorg-xkill xorg-xsetroot xorg-xbacklight xorg-xprop xorg\
      noto-fonts noto-fonts-emoji noto-fonts-cjk ttf-jetbrains-mono ttf-joypixels ttf-font-awesome \
      sxiv mpv zathura zathura-pdf-mupdf ffmpeg imagemagick  \
-     fzf man-db xwallpaper python-pywal unclutter xclip maim \
-     zip unzip unrar p7zip xdotool papirus-icon-theme brightnessctl  \
+     man-db xwallpaper python-pywal unclutter xclip maim \
+     zip unzip unrar p7zip xdotool brightnessctl  \
      dosfstools ntfs-3g git sxhkd zsh pulseaudio pavucontrol xfce4 xfce4-goodies\
-     emacs-nox arc-gtk-theme rsync firefox dash \
+     rsync firefox dash \
      xcompmgr libnotify dunst slock jq aria2 cowsay \
-     dhcpcd NetworkManager wpa_supplicant rsync pamixer mpd ncmpcpp \
-     zsh-syntax-highlighting xdg-user-dirs libconfig \
-     bluez bluez-utils
+     dhcpcd opendoas vim networkmanager wpa_supplicant rsync pamixer mpd ncmpcpp \
+     xdg-user-dirs libconfig \
+     bluez bluez-utils curl wget
 
 systemctl enable dhcpcd.service 
 systemctl enable NetworkManager.service 
+echo "permit persist :wheel" > /etc/doas.conf
 echo "%wheel ALL=(ALL:ALL) ALL" >> /etc/sudoers
 echo "Enter Username: "
 read username
 useradd -m -G wheel -s /bin/zsh $username
 passwd $username
-exit
-echo "Need umount -R /mnt"
-# echo "Pre-Installation Finish Reboot now"
-# ai3_path=/home/$username/arch_install3.sh
-# sed '1,/^#part3$/d' arch_install2.sh > $ai3_path
-# chown $username:$username $ai3_path
-# chmod +x $ai3_path
-# su -c $ai3_path -s /bin/sh $username
-# exit 
+echo "Pre-Installation Finish Reboot now"
+ai3_path=/home/$username/arch_install3.sh
+sed '1,/^#part3$/d' arch_install2.sh > $ai3_path
+chown $username:$username $ai3_path
+chmod +x $ai3_path
+su -c $ai3_path -s /bin/sh $username
+exit 
 
 #part3
-# printf '\033c'
-# cd $HOME
-# git clone --separate-git-dir=$HOME/.dotfiles https://github.com/bugswriter/dotfiles.git tmpdotfiles
-# rsync --recursive --verbose --exclude '.git' tmpdotfiles/ $HOME/
-# rm -r tmpdotfiles
-# # dwm: Window Manager
-# git clone --depth=1 https://github.com/Bugswriter/dwm.git ~/.local/src/dwm
-# sudo make -C ~/.local/src/dwm install
-#
-# # st: Terminal
-# git clone --depth=1 https://github.com/Bugswriter/st.git ~/.local/src/st
-# sudo make -C ~/.local/src/st install
-#
-# # dmenu: Program Menu
-# git clone --depth=1 https://github.com/Bugswriter/dmenu.git ~/.local/src/dmenu
-# sudo make -C ~/.local/src/dmenu install
-#
-# # dmenu: Dmenu based Password Prompt
-# git clone --depth=1 https://github.com/ritze/pinentry-dmenu.git ~/.local/src/pinentry-dmenu
-# sudo make -C ~/.local/src/pinentry-dmenu clean install
-#
-# # dwmblocks: Status bar for dwm
-# git clone --depth=1 https://github.com/bugswriter/dwmblocks.git ~/.local/src/dwmblocks
-# sudo make -C ~/.local/src/dwmblocks install
-#
-# # pikaur: AUR helper
-# git clone https://aur.archlinux.org/pikaur.git
-# cd pikaur
-# makepkg -fsri
-# cd
-# pikaur -S libxft-bgra-git yt-dlp-drop-in
-# mkdir dl dox imp music pix pub code
-#
-# ln -s ~/.config/x11/xinitrc .xinitrc
-# ln -s ~/.config/shell/profile .zprofile
-# sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-# mv ~/.oh-my-zsh ~/.config/zsh/oh-my-zsh
-# rm ~/.zshrc ~/.zsh_history
-# alias dots='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-# dots config --local status.showUntrackedFiles no
-# exit
+printf '\033c'
+cd $HOME
+xdg-user-dirs-update
+echo "Which DE/WM you will use?(xfce4,dwm)"
+read DE
+if [[ $DE == 'xfce4' ]]; then
+  echo "#!/bin/bash" > $HOME/.xinitrc
+  echo "setxkbmap -model pc105 -option grp:alt_shift_toggle -layout us,ru" > $HOME/.xinitrc
+  echo "exec startxfce4" >> $HOME/.xinitrc
+elif [[ $DE == 'dwm' ]]; then
+  > $HOME/.xinitrc
+  echo "#!/bin/bash" > $HOME/.xinitrc
+  echo "setxkbmap -model pc105 -option grp:alt_shift_toggle -layout us,ru" > $HOME/.xinitrc
+  echo "slstatus" >> $HOME/.xinitrc
+  echo "exec dwm" >> $HOME/.xinitrc
+fi
+echo "We will setting startx"
+> $HOME/.zprofile
+echo '#!/bin/bash' > $HOME/.zprofile
+echo '[[ $(fgconsole 2>/dev/null) == 1 ]] && exec startx --vt1' >> $HOME/.zprofile
+echo "Now we will set default shell zsh"
+chsh -s $(which zsh)
+echo "Now we will install oh-my-zsh"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+exit
