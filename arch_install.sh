@@ -15,12 +15,16 @@ read partition
 mkfs.ext4 $partition 
 read -p "Did you also create efi partition? [y/n]" answer
 if [[ $answer = y ]] ; then
+  lsblk
   echo "Enter EFI partition: "
   read efipartition
   mkfs.vfat -F 32 $efipartition
+  mkdir /mnt/boot
+  mount $efipartition /mnt/boot
 fi
 read -p "Did you also create swap partition? [y/n] " ans
 if [[ $ans = y ]] ; then
+  lsblk
   echo "Enter swap partition: "
   read swapn
   mkswap $swapn
@@ -43,8 +47,6 @@ hwclock --systohc
 echo "ru_RU.UTF-8 UTF-8" >> /etc/locale.gen
 echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 locale-gen
-# echo "LANG=en_US.UTF-8" > /etc/locale.conf
-# echo "KEYMAP=us" > /etc/vconsole.conf
 echo "Hostname: "
 read hostname
 echo $hostname > /etc/hostname
@@ -55,13 +57,7 @@ mkinitcpio -P
 passwd
 pacman --noconfirm -S grub efibootmgr os-prober
 lsblk
-echo "Enter EFI partition: " 
-read efipartition
-mkdir /boot/efi
-mount $efipartition /boot/efi 
-grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
-# sed -i 's/quiet/pci=noaer/g' /etc/default/grub
-# sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/g' /etc/default/grub
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
 grub-mkconfig -o /boot/grub/grub.cfg
 
 pacman -S --noconfirm xorg-server xorg-xinit xorg-xkill xorg-xsetroot xorg-xbacklight xorg-xprop xorg\
@@ -69,13 +65,29 @@ pacman -S --noconfirm xorg-server xorg-xinit xorg-xkill xorg-xsetroot xorg-xback
      sxiv mpv zathura zathura-pdf-mupdf ffmpeg imagemagick  \
      man-db xwallpaper python-pywal unclutter xclip maim \
      zip unzip unrar p7zip xdotool brightnessctl  \
-     dosfstools ntfs-3g git sxhkd zsh pulseaudio pavucontrol xfce4 xfce4-goodies\
-     rsync firefox dash \
-     xcompmgr libnotify dunst slock jq aria2 cowsay \
+     ntfs-3g git sxhkd zsh pulseaudio pavucontrol \
+     firefox dash kitty chromium\
+     picom libnotify dunst slock jq aria2 cowsay \
      dhcpcd opendoas vim networkmanager wpa_supplicant rsync pamixer mpd ncmpcpp \
      xdg-user-dirs libconfig \
      bluez bluez-utils curl wget
 
+echo "You have GPU nvidia?[y/n] "
+read gpu
+if [[ $gpu == 'y']]; then
+  echo "We will install nvidia"
+  pacman --noconfirm -S nvidia
+fi
+echo "Which DE/WM you want install?(xfce4,bspwm,kde)"
+read WM
+if [[ $WM == 'xfce4' ]];then
+  pacman --noconfirm -S xfce4 xfce4-goodies
+elif [[ $WM == 'kde' ]]; then
+  pacman --noconfirm -S plasma
+# это потом,т.к. у меня нет конфига бспвм с гитхаба, то же самое с двм.
+# elif [[ $WM == 'bspwm' ]]; then
+  # echo "We will install bspwm and sxhkd"
+fi
 systemctl enable dhcpcd.service 
 systemctl enable NetworkManager.service 
 echo "permit persist :wheel" > /etc/doas.conf
@@ -96,7 +108,7 @@ exit
 printf '\033c'
 cd $HOME
 xdg-user-dirs-update
-echo "Which DE/WM you will use?(xfce4,dwm)"
+echo "Which DE/WM you will use?(xfce4,dwm,kde)"
 read DE
 if [[ $DE == 'xfce4' ]]; then
   echo "#!/bin/bash" > $HOME/.xinitrc
@@ -108,6 +120,10 @@ elif [[ $DE == 'dwm' ]]; then
   echo "setxkbmap -model pc105 -option grp:alt_shift_toggle -layout us,ru" > $HOME/.xinitrc
   echo "slstatus" >> $HOME/.xinitrc
   echo "exec dwm" >> $HOME/.xinitrc
+elif [[ $DE == 'kde' ]]; then
+  echo "#!/bin/bash" > $HOME/.xinitrc
+  echo "setxkbmap -model pc105 -option grp:alt_shift_toggle -layout us,ru" > $HOME/.xinitrc
+  echo "exec startplasma-x11" >> $HOME/.xinitrc
 fi
 echo "We will setting startx"
 > $HOME/.zprofile
