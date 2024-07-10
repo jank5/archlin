@@ -74,15 +74,15 @@ pacman -S --noconfirm xorg-server xorg-xinit xorg-xkill xorg-xsetroot xorg-xback
 
 echo "You have GPU nvidia?[y/n] "
 read gpu
-if [[ $gpu == 'y']]; then
+if [[ $gpu == 'y' ]] ; then
   echo "We will install nvidia"
   pacman --noconfirm -S nvidia
 fi
 echo "Which DE/WM you want install?(xfce4,bspwm,kde)"
 read WM
-if [[ $WM == 'xfce4' ]];then
+if [[ $WM == 'xfce4' ]] ; then
   pacman --noconfirm -S xfce4 xfce4-goodies
-elif [[ $WM == 'kde' ]]; then
+elif [[ $WM == 'kde' ]] ; then
   pacman --noconfirm -S plasma
 # это потом,т.к. у меня нет конфига бспвм с гитхаба, то же самое с двм.
 # elif [[ $WM == 'bspwm' ]]; then
@@ -110,17 +110,17 @@ cd $HOME
 xdg-user-dirs-update
 echo "Which DE/WM you will use?(xfce4,dwm,kde)"
 read DE
-if [[ $DE == 'xfce4' ]]; then
+if [[ $DE == 'xfce4' ]] ; then
   echo "#!/bin/bash" > $HOME/.xinitrc
   echo "setxkbmap -model pc105 -option grp:alt_shift_toggle -layout us,ru" > $HOME/.xinitrc
   echo "exec startxfce4" >> $HOME/.xinitrc
-elif [[ $DE == 'dwm' ]]; then
+elif [[ $DE == 'dwm' ]] ; then
   > $HOME/.xinitrc
   echo "#!/bin/bash" > $HOME/.xinitrc
   echo "setxkbmap -model pc105 -option grp:alt_shift_toggle -layout us,ru" > $HOME/.xinitrc
   echo "slstatus" >> $HOME/.xinitrc
   echo "exec dwm" >> $HOME/.xinitrc
-elif [[ $DE == 'kde' ]]; then
+elif [[ $DE == 'kde' ]] ; then
   echo "#!/bin/bash" > $HOME/.xinitrc
   echo "setxkbmap -model pc105 -option grp:alt_shift_toggle -layout us,ru" > $HOME/.xinitrc
   echo "exec startplasma-x11" >> $HOME/.xinitrc
