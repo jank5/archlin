@@ -55,10 +55,12 @@ echo "::1             localhost" >> /etc/hosts
 echo "127.0.1.1       $hostname.localdomain $hostname" >> /etc/hosts
 mkinitcpio -P
 passwd
-pacman --noconfirm -S grub efibootmgr os-prober
+# pacman --noconfirm -S grub efibootmgr os-prober
+pacman --noconfirm -S refind gdisk
+refind-install
 lsblk
-grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
-grub-mkconfig -o /boot/grub/grub.cfg
+# grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
+# grub-mkconfig -o /boot/grub/grub.cfg
 
 pacman -S --noconfirm xorg-server xorg-xinit xorg-xkill xorg-xsetroot xorg-xbacklight xorg-xprop xorg\
      noto-fonts noto-fonts-emoji noto-fonts-cjk ttf-jetbrains-mono ttf-joypixels ttf-font-awesome \
