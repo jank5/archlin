@@ -55,13 +55,17 @@ echo "::1             localhost" >> /etc/hosts
 echo "127.0.1.1       $hostname.localdomain $hostname" >> /etc/hosts
 mkinitcpio -P
 passwd
-# pacman --noconfirm -S grub efibootmgr os-prober
-pacman --noconfirm -S refind gdisk
-refind-install
-lsblk
-# grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
-# grub-mkconfig -o /boot/grub/grub.cfg
-
+echo "Which bootloader you want use?(refind or grub)"
+read bootl
+if [[ $bootl == 'refind' ]]; then
+  echo "We will install refind"
+  pacman --noconfirm -S refind gdisk
+  refind-install
+elif [[ $bootl == 'grub' ]]; then
+  pacman --noconfirm -S grub efibootmgr os-prober
+  grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
+  grub-mkconfig -o /boot/grub/grub.cfg
+fi
 pacman -S --noconfirm xorg-server xorg-xinit xorg-xkill xorg-xsetroot xorg-xbacklight xorg-xprop xorg\
      noto-fonts noto-fonts-emoji noto-fonts-cjk ttf-jetbrains-mono ttf-joypixels ttf-font-awesome \
      sxiv mpv zathura zathura-pdf-mupdf ffmpeg imagemagick  \
@@ -84,9 +88,6 @@ echo "Which DE/WM you want install?(xfce4)"
 read WM
 if [[ $WM == 'xfce4' ]] ; then
   pacman --noconfirm -S xfce4 xfce4-goodies
-# это потом,т.к. у меня нет конфига бспвм с гитхаба, то же самое с двм.
-# elif [[ $WM == 'bspwm' ]]; then
-  # echo "We will install bspwm and sxhkd"
 fi
 systemctl enable dhcpcd.service 
 systemctl enable NetworkManager.service 
