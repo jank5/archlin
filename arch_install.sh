@@ -83,7 +83,8 @@ read WM
 if [[ $WM == 'xfce4' ]] ; then
   pacman --noconfirm -S xfce4 xfce4-goodies
 elif [[ $WM == 'kde' ]] ; then
-  pacman --noconfirm -S plasma
+  pacman --noconfirm -S plasma plasma-desktop kde-applications kdeplasma-addons sddm
+  systemctl enable sddm.service
 # это потом,т.к. у меня нет конфига бспвм с гитхаба, то же самое с двм.
 # elif [[ $WM == 'bspwm' ]]; then
   # echo "We will install bspwm and sxhkd"
