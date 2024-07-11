@@ -69,7 +69,7 @@ pacman -S --noconfirm xorg-server xorg-xinit xorg-xkill xorg-xsetroot xorg-xback
      firefox dash kitty chromium\
      picom libnotify dunst slock jq aria2 cowsay \
      dhcpcd opendoas vim networkmanager wpa_supplicant rsync pamixer mpd ncmpcpp \
-     xdg-user-dirs libconfig \
+     xdg-user-dirs libconfig neofetch \
      bluez bluez-utils curl wget
 
 echo "You have GPU nvidia?[y/n] "
@@ -78,18 +78,10 @@ if [[ $gpu == 'y' ]] ; then
   echo "We will install nvidia"
   pacman --noconfirm -S nvidia
 fi
-echo "Which DE/WM you want install?(xfce4,bspwm,kde)"
+echo "Which DE/WM you want install?(xfce4)"
 read WM
 if [[ $WM == 'xfce4' ]] ; then
   pacman --noconfirm -S xfce4 xfce4-goodies
-elif [[ $WM == 'kde' ]] ; then
-  pacman --noconfirm -S plasma plasma-desktop kde-applications kdeplasma-addons 
-  echo "You want install sddm?[y/n] "
-  read sddm
-  if [[ $sddm == 'y' ]]; then
-    pacman --noconfirm -S sddm
-    systemctl enable sddm.service
-  fi
 # это потом,т.к. у меня нет конфига бспвм с гитхаба, то же самое с двм.
 # elif [[ $WM == 'bspwm' ]]; then
   # echo "We will install bspwm and sxhkd"
@@ -114,7 +106,7 @@ exit
 printf '\033c'
 cd $HOME
 xdg-user-dirs-update
-echo "Which DE/WM you will use?(xfce4,dwm,kde)"
+echo "Which DE/WM you will use?(xfce4,dwm)"
 read DE
 if [[ $DE == 'xfce4' ]] ; then
   echo "#!/bin/bash" > $HOME/.xinitrc
@@ -126,10 +118,6 @@ elif [[ $DE == 'dwm' ]] ; then
   echo "setxkbmap -model pc105 -option grp:alt_shift_toggle -layout us,ru" > $HOME/.xinitrc
   echo "slstatus" >> $HOME/.xinitrc
   echo "exec dwm" >> $HOME/.xinitrc
-elif [[ $DE == 'kde' ]] ; then
-  echo "#!/bin/bash" > $HOME/.xinitrc
-  echo "setxkbmap -model pc105 -option grp:alt_shift_toggle -layout us,ru" > $HOME/.xinitrc
-  echo "exec startplasma-x11" >> $HOME/.xinitrc
 fi
 echo "We will setting startx"
 > $HOME/.zprofile
