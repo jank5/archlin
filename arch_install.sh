@@ -55,6 +55,14 @@ echo "::1             localhost" >> /etc/hosts
 echo "127.0.1.1       $hostname.localdomain $hostname" >> /etc/hosts
 mkinitcpio -P
 passwd
+ls -A /boot
+echo "Check the contents of the directory /boot,there have 3 file?(y/n)?"
+read direc
+if [[ $direc == 'n' ]]; then
+  pacman --noconfirm -S linux linux-firmware
+else
+  echo "good"
+fi
 echo "Which bootloader you want use?(refind or grub)"
 read bootl
 if [[ $bootl == 'refind' ]]; then
