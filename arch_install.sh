@@ -104,7 +104,7 @@ pacman -S --noconfirm xorg-server xorg-xinit xorg-xkill xorg-xsetroot xorg-xback
      zip unzip unrar p7zip xdotool brightnessctl  \
      ntfs-3g git sxhkd zsh pulseaudio pavucontrol \
      firefox dash kitty chromium zoxide\
-     picom libnotify dunst slock jq aria2 cowsay \
+     picom libnotify dunst slock jq aria2 cowsay feh \
      dhcpcd opendoas vim neovim networkmanager wpa_supplicant rsync pamixer mpd ncmpcpp \
      xdg-user-dirs libconfig neofetch \
      bluez bluez-utils curl wget
