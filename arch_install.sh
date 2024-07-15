@@ -70,19 +70,42 @@ if [[ $bootl == 'refind' ]]; then
   pacman --noconfirm -S refind gdisk
   refind-install
 elif [[ $bootl == 'grub' ]]; then
+  echo "We will check mountpoint EFI partition.Have /boot?[y/n]"
+  lsblk
+  read check
+  if [[ $check == 'n' ]];then
+    lsblk
+    echo "Where place EFI partition?"
+    read place
+    mount $place
+  fi
   pacman --noconfirm -S grub efibootmgr os-prober
   grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
   grub-mkconfig -o /boot/grub/grub.cfg
 fi
+cat /etc/fstab
+echo "We will edit file /etc/fstab[y/n]"
+read edit 
+if [[ $edit == 'y' ]]; then
+  blkid
+  echo "You remembered?[y/n]"
+  read ready
+  if [[ $ready == 'y' ]]; then
+    echo "Write UUID"
+    read wruuid
+    echo "UUID=$wruuid    /boot    vfat    rw,relatime,defaults 0 1" >> /etc/fstab
+  fi
+fi
+
 pacman -S --noconfirm xorg-server xorg-xinit xorg-xkill xorg-xsetroot xorg-xbacklight xorg-xprop xorg\
-     noto-fonts noto-fonts-emoji noto-fonts-cjk ttf-jetbrains-mono ttf-joypixels ttf-font-awesome \
+     noto-fonts noto-fonts-emoji noto-fonts-cjk ttf-nerd-fonts-symbols ttf-nerd-fonts-sybols-common ttf-nerd-fonts-symbols-mono ttf-jetbrains-mono ttf-joypixels ttf-font-awesome \
      sxiv mpv zathura zathura-pdf-mupdf ffmpeg imagemagick  \
-     man-db xwallpaper python-pywal unclutter xclip maim \
+     man-db python-pywal unclutter xclip maim \
      zip unzip unrar p7zip xdotool brightnessctl  \
      ntfs-3g git sxhkd zsh pulseaudio pavucontrol \
-     firefox dash kitty chromium\
+     firefox dash kitty chromium zoxide\
      picom libnotify dunst slock jq aria2 cowsay \
-     dhcpcd opendoas vim networkmanager wpa_supplicant rsync pamixer mpd ncmpcpp \
+     dhcpcd opendoas vim neovim networkmanager wpa_supplicant rsync pamixer mpd ncmpcpp \
      xdg-user-dirs libconfig neofetch \
      bluez bluez-utils curl wget
 
@@ -92,7 +115,14 @@ if [[ $gpu == 'y' ]] ; then
   echo "We will install nvidia"
   pacman --noconfirm -S nvidia
 fi
-echo "Which DE/WM you want install?(xfce4)"
+echo "Which CPU you use?(amd/intel)"
+read cpu
+if [[ $cpu == 'amd' ]]; then
+  pacman -S amd-ucode
+else
+  pacman -S intel-ucode
+fi
+echo "Which DE/WM you want install?(xfce4,or skip)"
 read WM
 if [[ $WM == 'xfce4' ]] ; then
   pacman --noconfirm -S xfce4 xfce4-goodies
@@ -117,7 +147,23 @@ exit
 printf '\033c'
 cd $HOME
 xdg-user-dirs-update
-echo "Which DE/WM you will use?(xfce4,dwm)"
+
+echo "Which your username pc?"
+read name
+# dwm 
+git clone https://github.com/jank5/dwm.git ~/.config/suckless/dwm
+make -C /home/$name/suckless/dwm install
+# dmenu 
+git clone https://github.com/jank5/dmenu.git ~/.config/suckless/dmenu
+make -C /home/$name/suckless/dmenu install
+# slstatus
+git clone https://github.com/jank5/slstatus.git ~/.config/suckless/slstatus
+make -C /home/$name/suckless/slstatus install
+
+sleep 2
+echo "We will create hide file"
+git clone https://github.com/jank5/hidefile.git /home/$name/
+echo "Which DE/WM you will use?(xfce4,dwm,nothing)"
 read DE
 if [[ $DE == 'xfce4' ]] ; then
   echo "#!/bin/bash" > $HOME/.xinitrc
@@ -129,6 +175,8 @@ elif [[ $DE == 'dwm' ]] ; then
   echo "setxkbmap -model pc105 -option grp:alt_shift_toggle -layout us,ru" > $HOME/.xinitrc
   echo "slstatus" >> $HOME/.xinitrc
   echo "exec dwm" >> $HOME/.xinitrc
+elif [[ $DE == 'nothing' ]]; then
+  echo "You choose nothing,okay"
 fi
 echo "We will setting startx"
 > $HOME/.zprofile
