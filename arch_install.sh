@@ -77,7 +77,7 @@ elif [[ $bootl == 'grub' ]]; then
     lsblk
     echo "Where place EFI partition?"
     read place
-    mount $place
+    mount $place /boot
   fi
   pacman --noconfirm -S grub efibootmgr os-prober
   grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
