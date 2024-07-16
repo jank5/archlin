@@ -95,6 +95,8 @@ if [[ $edit == 'y' ]]; then
     read wruuid
     echo "UUID=$wruuid    /boot    vfat    rw,relatime,defaults 0 1" >> /etc/fstab
   fi
+  cat /etc/fstab
+  sleep 3
 fi
 
 pacman -S --noconfirm xorg-server xorg-xinit xorg-xkill xorg-xsetroot xorg-xbacklight xorg-xprop xorg\
