@@ -100,7 +100,7 @@ if [[ $edit == 'y' ]]; then
 fi
 
 pacman -S --noconfirm xorg-server xorg-xinit xorg-xkill xorg-xsetroot xorg-xbacklight xorg-xprop xorg\
-     noto-fonts noto-fonts-emoji noto-fonts-cjk ttf-nerd-fonts-symbols ttf-nerd-fonts-sybols-common ttf-nerd-fonts-symbols-mono ttf-jetbrains-mono ttf-joypixels ttf-font-awesome \
+     noto-fonts noto-fonts-emoji noto-fonts-cjk ttf-nerd-fonts-symbols ttf-nerd-fonts-symbols-common ttf-nerd-fonts-symbols-mono ttf-jetbrains-mono ttf-joypixels ttf-font-awesome \
      sxiv mpv zathura zathura-pdf-mupdf ffmpeg imagemagick  \
      man-db python-pywal unclutter xclip maim \
      zip unzip unrar p7zip xdotool brightnessctl  \
@@ -121,7 +121,7 @@ echo "Which CPU you use?(amd/intel)"
 read cpu
 if [[ $cpu == 'amd' ]]; then
   pacman -S amd-ucode
-else
+elif [[ $cpu == 'intel' ]]; then
   pacman -S intel-ucode
 fi
 echo "Which DE/WM you want install?(xfce4,or skip)"
@@ -150,6 +150,26 @@ printf '\033c'
 cd $HOME
 xdg-user-dirs-update
 
+ls -A $HOME
+sleep 5
+git clone https://github.com/jank5/wallpapers.git ~/Pictures
+ls -A ~/Pictures
+echo "Check, have wallpaper in directory Pictures?[y/n]"
+read wal
+if [[ $wal == 'y' ]];then
+  echo "okay"
+elif [[ $wal == 'n' ]];then
+  git clone https://github.com/jank5/wallpapers.git ~/Pictures
+fi
+git clone https://gitea.com/zemo/wal_templates.git ~/.config/wal/templates/
+rm -rf ~/.config/wal/templates/.git
+ls -A ~/.config/wal/templates
+sleep 3
+dir=~/Pictures
+ls -A $dir
+echo "Which wallpaper you want generate?"
+read gener
+wal -i $dir/$gener
 echo "Which your username pc?"
 read name
 # dwm 
@@ -164,7 +184,7 @@ make -C /home/$name/suckless/slstatus install
 
 sleep 2
 echo "We will create hide file"
-git clone https://github.com/jank5/hidefile.git /home/$name/
+git clone https://github.com/jank5/hidefile.git ~/
 echo "Which DE/WM you will use?(xfce4,dwm,nothing)"
 read DE
 if [[ $DE == 'xfce4' ]] ; then
