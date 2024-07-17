@@ -105,7 +105,7 @@ pacman -S --noconfirm xorg-server xorg-xinit xorg-xkill xorg-xsetroot xorg-xback
      man-db python-pywal unclutter xclip maim \
      zip unzip unrar p7zip xdotool brightnessctl  \
      ntfs-3g git sxhkd zsh pulseaudio pavucontrol \
-     firefox dash kitty chromium zoxide\
+     firefox dash kitty chromium zoxide ranger alacritty\
      picom libnotify dunst slock jq aria2 cowsay feh \
      dhcpcd opendoas vim neovim networkmanager wpa_supplicant rsync pamixer mpd ncmpcpp \
      xdg-user-dirs libconfig neofetch \
@@ -152,7 +152,9 @@ xdg-user-dirs-update
 
 ls -A $HOME
 sleep 5
+
 git clone https://github.com/jank5/wallpapers.git ~/Pictures
+rm -rf ~/Pictures/.git
 ls -A ~/Pictures
 echo "Check, have wallpaper in directory Pictures?[y/n]"
 read wal
@@ -160,16 +162,27 @@ if [[ $wal == 'y' ]];then
   echo "okay"
 elif [[ $wal == 'n' ]];then
   git clone https://github.com/jank5/wallpapers.git ~/Pictures
+  rm -rf ~/Pictures/.git
 fi
+
+git clone https://github.com/jank5/dotfile.git ~/.config/
+rm -rf ~/.config/templates
+rm -rf ~/.config/.git
+rm -rf ~/.config/twmn
+ls -A ~/.config
+sleep 4
+
 git clone https://gitea.com/zemo/wal_templates.git ~/.config/wal/templates/
 rm -rf ~/.config/wal/templates/.git
 ls -A ~/.config/wal/templates
 sleep 3
+
 dir=~/Pictures
 ls -A $dir
 echo "Which wallpaper you want generate?"
 read gener
 wal -i $dir/$gener
+
 echo "Which your username pc?"
 read name
 # dwm 
@@ -185,6 +198,8 @@ make -C /home/$name/suckless/slstatus install
 sleep 2
 echo "We will create hide file"
 git clone https://github.com/jank5/hidefile.git ~/
+ls -A ~/
+sleep 8
 echo "Which DE/WM you will use?(xfce4,dwm,nothing)"
 read DE
 if [[ $DE == 'xfce4' ]] ; then
