@@ -101,7 +101,7 @@ fi
 
 pacman -S --noconfirm xorg-server xorg-xinit xorg-xkill xorg-xsetroot xorg-xbacklight xorg-xprop xorg\
      noto-fonts noto-fonts-emoji noto-fonts-cjk ttf-nerd-fonts-symbols ttf-nerd-fonts-symbols-common ttf-nerd-fonts-symbols-mono ttf-jetbrains-mono ttf-joypixels ttf-font-awesome \
-     sxiv mpv zathura zathura-pdf-mupdf ffmpeg imagemagick  \
+     sxiv mpv zathura zathura-pdf-mupdf ffmpeg imagemagick  emacs fd ripgrep\
      man-db python-pywal unclutter xclip maim \
      zip unzip unrar p7zip xdotool brightnessctl  \
      ntfs-3g git sxhkd zsh pulseaudio pavucontrol \
