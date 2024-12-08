@@ -100,7 +100,7 @@ pacman -S --noconfirm xorg-server xorg-xinit xorg-xkill xorg-xsetroot xorg-xback
      dhcpcd connman wpa_supplicant pamixer mpd ncmpcpp \
      xdg-user-dirs libconfig telegram-desktop firefox\
      bluez bluez-utils curl wget networkmanager opendoas rofi polybar\
-     nitrogen dunst arandr picom feh
+     nitrogen dunst arandr picom feh syncthing
 
 echo "We will install drivers for GPU and CPU"
 pacman --noconfirm -S nvidia intel-ucode
